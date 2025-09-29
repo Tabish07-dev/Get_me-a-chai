@@ -15,6 +15,19 @@ const Login = () => {
     }
   }, [session, router])
 
+  const continueAsGuest = () => {
+    try {
+      const guest = { name: 'Guest User', email: `guest_${Date.now()}@local`, image: '', savedAt: new Date().toISOString() }
+      const key = 'gmac_users'
+      const existing = JSON.parse(localStorage.getItem(key) || '[]')
+      existing.unshift(guest)
+      localStorage.setItem(key, JSON.stringify(existing.slice(0, 50)))
+    } catch (err) {
+      // ignore localStorage errors
+    }
+    router.push('/dashboard')
+  }
+
   return (
     <div className='text-white py-8 md:py-14 container mx-auto px-4'>
       <h1 className='text-center font-bold text-2xl md:text-3xl mb-8'>Login to Get Started</h1>
@@ -149,6 +162,12 @@ const Login = () => {
           <span>Continue with Apple</span>
         </button>
 
+
+        {/* Guest fallback */}
+        <button onClick={continueAsGuest}
+          className="flex items-center w-full max-w-xs bg-gray-700 text-white border border-gray-300 rounded-lg shadow-md px-6 py-2 text-sm font-medium hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors">
+          Continue as guest
+        </button>
 
       </div>
     </div>

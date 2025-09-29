@@ -22,6 +22,30 @@ const Dashboard = () => {
   useEffect(() => {
     if (status === "loading") return
     if (!session) {
+      // If no NextAuth session, try to populate from localStorage (guest fallback)
+      try {
+        const key = 'gmac_users'
+        const stored = typeof window !== 'undefined' ? localStorage.getItem(key) : null
+        if (stored) {
+          const users = JSON.parse(stored)
+          const u = users[0]
+          if (u) {
+            setForm({
+              name: u.name || 'Guest User',
+              email: u.email || '',
+              username: (u.name || 'guest').toLowerCase().replace(/\s+/g, '') || 'guest',
+              profilepic: u.image || '/tabi.png.jpg',
+              coverpic: '',
+              razorpayid: '',
+              razorpaysecret: ''
+            })
+            return
+          }
+        }
+      } catch (err) {
+        // ignore localStorage issues
+      }
+      // If no guest found, redirect to login
       router.push('/login')
       return
     }
